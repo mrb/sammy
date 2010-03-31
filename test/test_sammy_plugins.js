@@ -303,6 +303,7 @@
       .should('add broadcast helper to context', function() {
         ok($.isFunction(this.context.broadcast));
       })
+			.should('')
 
     };
 })(jQuery);
