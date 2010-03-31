@@ -49,15 +49,15 @@
          this.app.store('cache').clear('mycache');
          ok(!this.app.cache('mycache'))
        });
-
-
+      
+      
        context('Sammy', 'Template', {
          before: function() {
            this.app = new Sammy.Application(function() {
              this.use(Sammy.Template);
            });
            this.context = new this.app.context_prototype(this.app, 'get', '#/', {});
-
+      
            this.alias_app = new Sammy.Application(function() {
              this.use(Sammy.Template, 'tpl');
            });
@@ -85,8 +85,8 @@
          ok($.isFunction(this.alias_context.tpl));
          ok(this.alias_context.tpl.toString().match(/srender/));
        });
-
-
+      
+      
        context('Sammy.NestedParams', 'parsing', {
          before: function () {
            this.app = new Sammy.Application(function() {
@@ -200,7 +200,7 @@
            app.unload();
          }, this, 1, 2);
        });
-
+      
        context('Sammy.NestedParams', 'bad fields', {
          before: function () {
            this.app = new Sammy.Application(function() {
@@ -214,8 +214,8 @@
            app._parseFormParams($('#bad_nested_params_form'));
          });
        });
-
-
+      
+      
        // Pretty much a copy of the Template tests
        context('Sammy', 'Mustache', {
           before: function() {
@@ -223,7 +223,7 @@
               this.use(Sammy.Mustache);
             });
             this.context = new this.app.context_prototype(this.app, 'get', '#/', {});
-
+      
             this.alias_app = new Sammy.Application(function() {
               this.use(Sammy.Mustache, 'ms');
             });
@@ -252,7 +252,7 @@
           ok($.isFunction(this.alias_context.ms));
           ok(this.alias_context.ms.toString().match(/Mustache/));
         });
-
+      
       context('Sammy', 'JSON', {
         before: function() {
           this.app = new Sammy.Application(function() {
@@ -274,8 +274,8 @@
       .should('stringify JSON if object is an object', function() {
         equal(this.context.json({test: "123"}),"{\"test\":\"123\"}");
       });
-
-
+      
+      
       context('Sammy', 'Haml', {
         before: function() {
           this.app = new Sammy.Application(function() {
@@ -295,7 +295,8 @@
       context('Sammy', 'Broadcast', {
         before: function() {
           this.app = new Sammy.Application(function() {
-            this.use(Sammy.Broadcast);
+						var callback = function(){$(this).addClass('great-job!')};
+            this.use(Sammy.Broadcast, '#messages',{'callback': callback});
           });
           this.context = new this.app.context_prototype(this.app, 'get', '#/', {});
         }
@@ -303,7 +304,13 @@
       .should('add broadcast helper to context', function() {
         ok($.isFunction(this.context.broadcast));
       })
-			.should('')
+			.should('pass the message to the DOM element', function(){
+				this.context.broadcast({'success':'great job!'});
+				equal($("#messages").html(),'great job!');
+			})
+			.should('use the passed callback',function(){
+				equal($("#messages").hasClass('great-job!'),true);
+			})
 
     };
 })(jQuery);
